@@ -10,7 +10,7 @@ pinecone.init(
     environment=os.getenv('PINECONE_ENVIRONMENT'),
     api_key=os.getenv('PINECONE_API_KEY')
 )
-index = pinecone.Index('disease-symptoms')
+index = pinecone.Index('dataset-of-diseases-and-symptoms')
 @app.route('/query')
 def query():
     sentence = request.args.get('sentence')
