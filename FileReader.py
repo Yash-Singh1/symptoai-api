@@ -1,8 +1,7 @@
 import os
 import json
 files = os.listdir('Symptoms/')
-dataset_symptoms = []
-dataset_diseases = []
+dataset = {}
 file_num = 0
 for disease in files:
   file_num += 1
@@ -22,9 +21,12 @@ for disease in files:
         thread_diseases += new_line
     else:
       pass
-  dataset_symptoms.append(thread_symptoms)
-  dataset_diseases.append(thread_diseases)
-with open('Symptoms.txt', 'w') as txt_symp:
-  txt_symp.write(str(dataset_symptoms))
-with open('Diseases.txt', 'w') as txt_dise:
-  txt_dise.write(str(dataset_diseases))
+  dataset[thread_diseases] = thread_symptoms
+unique_dataset = {}
+for key, value in dataset.items():
+    if value not in unique_dataset.values():
+        unique_dataset[key] = value
+print(unique_dataset)
+with open('Dataset.json', 'w') as file_data:
+  data = json.dumps(unique_dataset)
+  file_data.write(data)
