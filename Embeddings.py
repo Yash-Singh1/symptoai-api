@@ -7,11 +7,11 @@ pinecone.init(
     environment=os.getenv('PINECONE_ENVIRONMENT'),
     api_key=os.getenv('PINECONE_API_KEY')
 )
-index = pinecone.Index('disease-symptoms')
-data_symptoms = open('Symptoms.txt', 'r').read()
-dataset_symptoms = eval(data_symptoms)
-data_diseases = open('Diseases.txt', 'r').read()
-dataset_diseases = eval(data_diseases)
+index = pinecone.Index('dataset-of-diseases-and-symptoms')
+string_data = open('Dataset.json', 'r').read()
+dataset = json.loads(string_data)
+dataset_symptoms = list(dataset.values())
+dataset_diseases = list(dataset.keys())
 for i in tqdm(range(0, len(dataset_symptoms), 32)):
     i_end = min(i+32, len(dataset_symptoms))
     symptoms_batch = dataset_symptoms[i: i+32]
