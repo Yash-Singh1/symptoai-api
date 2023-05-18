@@ -1,40 +1,51 @@
 from flask import Flask, request
-import json
-import pinecone
 import openai
-import os
 from flask_cors import CORS
+import os
 app = Flask(__name__)
-import time
 CORS(app)
 openai.api_key = os.getenv('OPENAI_KEY')
-pinecone.init(
-    environment=os.getenv('PINECONE_ENVIRONMENT'),
-    api_key=os.getenv('PINECONE_API_KEY')
-index = pinecone.Index('dataset-of-diseases-and-symptoms')
+#Variables
+prompt = 'You are a helpful assistant that does the following: Your main job will be to provide the top 5\
+  medical issues, problems or conditions based on user information provided. The user information will be in\
+  a dictionary. This dictionary will consist of variables, such as age, sex, symptoms, past medical history,\
+  current injury/trauma to the area, medications, and lifestyle factors. Your output will also be in the form\
+  of a dictionary consist of the top 5 medical issues, conditions, or problems the user could be having, and\
+  corresponding to\ them, you will provide another dictionary, which will consist of the probability that the\
+  user could be experiencing, listed with one of the five "Very High, High, Moderate, Low, Very Low". You will\
+  also provide a 20-30 word summary of each of the medical issues, problems or conditions, in that dictionary.\
+  Finally, you will also provide what kind of doctor or treatment they should see, in 1-3 words in that\
+  Dictionary. The treatment can be the same across all issues but does not have to be. The only output you\
+  will return is the dictionary.'
+example_info = '{"age":15,"sex":"male","symptoms":"pain in the wrist, inability of motion near the wrist",\
+  "recent injury/trauma to the area":"got hit with a soccer ball at a high speed, in the wrist","medications":\
+  "vitamin D3","past medical issues":"fractured same wrist two years ago, in an injury, took two months to\
+  heal","lifestyle":"plays a lot of soccer, eats well"}'
+example_answer = '{"Wrist sprain/strain":{"probability":"Very High","summary":"Stretching or tearing of wrist\
+  ligaments due to sudden force or excessive bending, leading to pain and limited motion.", "treatment": "Orthopedic\
+  Doctors"},"Wrist fracture": {"probability":"Moderate","summary":"A break in the bones of the wrist, which may\
+  occur from trauma or re-injury, causing pain, swelling, and difficulty moving the wrist.", "treatment": "Orthopedic Doctors"},"Ligament Tear":\
+  {"probability":"Moderate","summary":"Damage to the ligaments in the wrist, often caused by trauma, leading\
+  to pain, instability, and compromised wrist function.", "treatment": "Orthopedic Doctors"},"Tendonitis":\
+  {"probability":"Low","summary":"Inflammation of the tendons in the wrist, typically caused by repetitive or \
+  excessive use, resulting in pain and restricted movement.", "treatment": "Orthopedic Doctors"},"Arthritis":\
+  {"probability":"Very Low","summary":"Inflammation of the joints in the wrist, which can occur at a young age\
+  as well, causing pain, stiffness, and limited range of motion.", "treatment": "Rheumatologists"}}'
 @app.route('/query')
 def query():
-    chat_gpt_returns = []
-    sentence = request.args.get('sentence')
-    xq = openai.Embedding.create(input=sentence, engine='text-embedding-ada-002')['data'][0]['embedding']
-    results = index.query(xq, top_k=5, include_metadata=True, namespace='example-namespace')
-    for num in range(5):
-        message = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant that given a medical conditions, output what specialist doctor they should go to, and the output should be 1 word."},
-                {"role": "user", "content": "Heart pain"},
-                {"role": "assistant", "content": "Cardiologist"},
-                {"role": "user", "content": "Leg fracture"},
-                {"role": "assistant", "content": "Orthopedist"},
-                {"role": "user", "content": results['matches'][num]['metadata']['metadata_key']}
-            ]
-        )
-        output = message.get('choices')[0]
-        content = output.get('message')
-        response = content.get('content') #OUTPUT FROM BACK-END
-        chat_gpt_returns.append(response)
-    return str(chat_gpt_returns)
+    user_info = request.args.get('user_info')
+    message = openai.ChatCompletion.create(
+          model="gpt-3.5-turbo",
+          messages=[
+                {"role": "system", "content": prompt},
+                {"role": "user", "content": example_info},
+                {"role": "assistant", "content": example_answer},
+                {"role": "user", "content": user_info}
+          ]
+      )
+    output = message.get('choices')[0]
+    content = output.get('message')
+    response = content.get('content')
+    return(str(response))
 if __name__ == "__main__":
     app.run()
-
