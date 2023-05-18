@@ -23,12 +23,12 @@ example_info = '{"age":15,"sex":"male","symptoms":"pain in the wrist, inability 
   heal","lifestyle":"plays a lot of soccer, eats well"}'
 example_answer = '{"Wrist sprain/strain":{"probability":"Very High","summary":"Stretching or tearing of wrist\
   ligaments due to sudden force or excessive bending, leading to pain and limited motion.", "treatment": "Orthopedic\
-  Doctor"},"Wrist fracture": {"probability":"Moderate","summary":"A break in the bones of the wrist, which may\
-  occur from trauma or re-injury, causing pain, swelling, and difficulty moving the wrist."},"Ligament Tear":\
+  Doctors"},"Wrist fracture": {"probability":"Moderate","summary":"A break in the bones of the wrist, which may\
+  occur from trauma or re-injury, causing pain, swelling, and difficulty moving the wrist.", "treatment": "Orthopedic Doctors"},"Ligament Tear":\
   {"probability":"Moderate","summary":"Damage to the ligaments in the wrist, often caused by trauma, leading\
-  to pain, instability, and compromised wrist function.", "treatment": "Orthopedic Doctor"},"Tendonitis":\
+  to pain, instability, and compromised wrist function.", "treatment": "Orthopedic Doctors"},"Tendonitis":\
   {"probability":"Low","summary":"Inflammation of the tendons in the wrist, typically caused by repetitive or \
-  excessive use, resulting in pain and restricted movement.", "treatment": "Orthopedic Doctor"},"Arthritis":\
+  excessive use, resulting in pain and restricted movement.", "treatment": "Orthopedic Doctors"},"Arthritis":\
   {"probability":"Very Low","summary":"Inflammation of the joints in the wrist, which can occur at a young age\
   as well, causing pain, stiffness, and limited range of motion.", "treatment": "Rheumatologists"}}'
 @app.route('/query')
