@@ -18,9 +18,9 @@ prompt = 'You are a helpful assistant that does the following: Your main job wil
   Dictionary. The treatment can be the same across all issues but does not have to be. The only output you\
   will return is the dictionary, which should adhere to the JSON spec.'
 example_info = '{"age":15,"sex":"male","symptoms":"pain in the wrist, inability of motion near the wrist",\
-  "recent injury/trauma to the area":"got hit with a soccer ball at a high speed, in the wrist","medications":\
-  "vitamin D3","past medical issues":"fractured same wrist two years ago, in an injury, took two months to\
-  heal","lifestyle":"plays a lot of soccer, eats well"}'
+  "recent injury/trauma to the area":"got hit with a soccer ball at a high speed, in the wrist",\
+  "past medical issues":"fractured same wrist two years ago, in an injury, took two months to\
+  heal","lifestyle &medications":"plays a lot of soccer, eats well, takes vitamin D3"}'
 example_answer = '{"Wrist sprain/strain":{"probability":"Very High","summary":"Stretching or tearing of wrist\
   ligaments due to sudden force or excessive bending, leading to pain and limited motion.", "treatment": "Orthopedic\
   Doctors"},"Wrist fracture": {"probability":"Moderate","summary":"A break in the bones of the wrist, which may\
