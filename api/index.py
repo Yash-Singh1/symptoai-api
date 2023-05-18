@@ -16,7 +16,7 @@ prompt = 'You are a helpful assistant that does the following: Your main job wil
   also provide a 20-30 word summary of each of the medical issues, problems or conditions, in that dictionary.\
   Finally, you will also provide what kind of doctor or treatment they should see, in 1-3 words in that\
   Dictionary. The treatment can be the same across all issues but does not have to be. The only output you\
-  will return is the dictionary.'
+  will return is the dictionary, which should adhere to the JSON spec.'
 example_info = '{"age":15,"sex":"male","symptoms":"pain in the wrist, inability of motion near the wrist",\
   "recent injury/trauma to the area":"got hit with a soccer ball at a high speed, in the wrist","medications":\
   "vitamin D3","past medical issues":"fractured same wrist two years ago, in an injury, took two months to\
@@ -46,6 +46,6 @@ def query():
     output = message.get('choices')[0]
     content = output.get('message')
     response = content.get('content')
-    return(str(response))
+    return(response)
 if __name__ == "__main__":
     app.run()
