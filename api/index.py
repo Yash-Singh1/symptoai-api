@@ -66,5 +66,6 @@ def query():
         dictionary[key].update({"metadata": query_returns[count]})
         count += 1
     return json.dumps(dictionary)
+
 if __name__ == "__main__":
     app.run()
