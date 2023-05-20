@@ -2,10 +2,11 @@ import openai
 import pinecone
 import json
 from tqdm.auto import tqdm
-openai.api_key = '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'
+import os
+openai.api_key = os.getenv('OPENAI_KEY')
 pinecone.init(
-    environment="asia-southeast1-gcp-free" ,
-    api_key="4715666f-7009-4cb6-8857-9dae917a2e75"
+    environment=os.getenv('PINECONE_ENV'),
+    api_key=os.getenv('PINECONE_KEY')
 )
 index = pinecone.Index('dataset-of-yelp-embeddings')
 string_data = open('Embeddings.json', 'r').read()
