@@ -4,6 +4,8 @@ from flask_cors import CORS
 import os
 import json
 import pinecone
+import tiktoken
+
 app = Flask(__name__)
 CORS(app)
 openai.api_key = os.getenv('OPENAI_KEY')
@@ -36,6 +38,7 @@ pinecone.init(
     environment=os.getenv('PINECONE_ENV'),
     api_key=os.getenv("PINECONE_KEY")
 )
+
 index = pinecone.Index('dataset-of-yelp-embeddings')
 @app.route('/query')
 def query():
@@ -68,6 +71,12 @@ def query():
         dictionary[key].update({"metadata": query_returns[count]})
         count += 1
     return json.dumps(dictionary)
+
+enc = tiktoken.encoding_for_model("gpt-3.5-turbo")
+
+@app.route('/count')
+def count():
+    return json.dumps(len(enc.encode(request.args.get('text'))))
 
 if __name__ == "__main__":
     app.run()
