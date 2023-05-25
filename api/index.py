@@ -39,6 +39,8 @@ pinecone.init(
 index = pinecone.Index('dataset-of-yelp-embeddings')
 @app.route('/query')
 def query():
+    if (request.headers.get('Authorization') != os.getenv('API_KEY')):
+        return '{ "error": "Unauthenticated" }', 401
     user_info = request.args.get('user_info')
     query_returns = []
     message = openai.ChatCompletion.create(
