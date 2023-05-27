@@ -53,9 +53,9 @@ def query():
     # if request.headers.get('Authorization') != os.getenv('API_KEY'):
     #     return '{ "error": "Unauthenticated" }', 401
     if request.headers.get('X-SymptoAI-Auth') is None:
-        return '{ "error": "Unauthenticated" }', 401
+        return '{ "error": "Provide authentication header" }', 401
     if r.get(request.headers.get('X-SymptoAI-Auth')) is None:
-        return '{ "error": "Unauthenticated" }', 401
+        return '{ "error": "Authentication token not registered" }', 401
     r.delete(request.headers.get('X-SymptoAI-Auth'))
     user_info = request.args.get('user_info')
     query_returns = []
