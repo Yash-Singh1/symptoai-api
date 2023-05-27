@@ -49,8 +49,9 @@ pinecone.init(
 index = pinecone.Index('dataset-of-yelp-embeddings')
 @app.route('/query')
 def query():
-    if request.headers.get('Authorization') != os.getenv('API_KEY'):
-        return '{ "error": "Unauthenticated" }', 401
+    # We already have redis based verification
+    # if request.headers.get('Authorization') != os.getenv('API_KEY'):
+    #     return '{ "error": "Unauthenticated" }', 401
     if request.headers.get('X-SymptoAI-Auth') is None:
         return '{ "error": "Unauthenticated" }', 401
     if r.get(request.headers.get('X-SymptoAI-Auth')) is None:
