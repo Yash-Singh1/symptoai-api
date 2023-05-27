@@ -5,6 +5,13 @@ import os
 import json
 import pinecone
 import tiktoken
+import redis
+
+r = redis.Redis(
+  host= 'usw1-superb-kite-34403.upstash.io',
+  port= '34403',
+  password= os.getenv('REDIS_PASSWORD'),
+)
 
 app = Flask(__name__)
 CORS(app)
@@ -18,7 +25,7 @@ prompt = 'You are a helpful assistant that does the following: Your main job wil
   user could be experiencing, listed with one of the five "Very High, High, Moderate, Low, Very Low". You will\
   also provide a 20-30 word summary of each of the medical issues, problems or conditions, in that dictionary.\
   Finally, you will also provide what kind of doctor or treatment they should see, in 1-3 words in that\
-  Dictionary. The treatment can be the same across all issues but does not have to be. The only output you\
+  Dictionary. The specialist doctor can be the same across all issues but does not have to be. The only output you\
   will return is the dictionary, which should adhere to the JSON spec.'
 example_info = '{"age":15,"sex":"male","symptoms":"pain in the wrist, inability of motion near the wrist",\
   "recent injury/trauma to the area":"got hit with a soccer ball at a high speed, in the wrist",\
@@ -42,8 +49,13 @@ pinecone.init(
 index = pinecone.Index('dataset-of-yelp-embeddings')
 @app.route('/query')
 def query():
-    if (request.headers.get('Authorization') != os.getenv('API_KEY')):
+    if request.headers.get('Authorization') != os.getenv('API_KEY'):
         return '{ "error": "Unauthenticated" }', 401
+    if request.headers.get('X-SymptoAI-Auth') is None:
+        return '{ "error": "Unauthenticated" }', 401
+    if r.get(request.headers.get('X-SymptoAI-Auth')) is None:
+        return '{ "error": "Unauthenticated" }', 401
+    r.delete(request.headers.get('X-SymptoAI-Auth'))
     user_info = request.args.get('user_info')
     query_returns = []
     message = openai.ChatCompletion.create(
@@ -57,14 +69,16 @@ def query():
       )
     dictionary = json.loads(message['choices'][0]['message']['content'])
     resources = []
-    for condition, info in dictionary.items():
+    queries = []
+    for _condition, info in dictionary.items():
         treatment = info["treatment"]
         resources.append(treatment)
     for vector in resources:
         treatment_vectors = openai.Embedding.create(input=vector, engine='text-embedding-ada-002')['data'][0]['embedding']
         results = index.query(treatment_vectors, top_k=5, include_metadata=True, namespace='example-namespace')
+        queries.append(results)
     for num in range(5):
-        match_string = results['matches'][num]['metadata']['metadata_key']
+        match_string = queries[num]['matches'][0]['metadata']['metadata_key']
         query_returns.append(match_string)
     count = 0
     for key, value in dictionary.items():
