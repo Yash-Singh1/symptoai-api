@@ -143,7 +143,7 @@ def query2():
     resources = []
     queries = []
     for _condition, info in dictionary.items():
-        treatment = info["treatment"]
+        treatment = info["doctor"]
         resources.append(treatment)
     for vector in resources:
         treatment_vectors = openai.Embedding.create(input=vector, engine='text-embedding-ada-002')['data'][0]['embedding']
